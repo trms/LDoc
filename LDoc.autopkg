@@ -1,0 +1,70 @@
+nuget {
+	nuspec {
+		id = ldoc;
+		title: LDoc;
+		version: 1.4.2.4;
+		authors: {coapp, Steve Donovan};
+		owners: {Steve Donovan};
+		licenseUrl: "http://opensource.org/licenses/MIT";
+		releaseNotes: {@"
+		Can define fields/properties of objects; readonly modifier supported (#93); Can switch off auto-linking to Lua manual with no_lua_ref; Module sorting is off by default, use sort_modules=true; References to 'classes' now work properly; Option to use first Markdown title instead of file names with use_markdown_titles; Automatic Metamethods and Methods sections generated for classmod classes; unqualified=true to strip package names on sidebar (#110); Custom tags (which may be hidden)
+Custom Display Name handlers"}; 
+		requireLicenseAcceptance:false;
+		summary: "A Documentation System for Lua";
+		copyright: "Copyright (C) 2011 Steve Donovan.";
+		tags: {native, Lua, module};
+		description: {
+@"LDoc is a software documentation tool which automatically generates API documentation out of source code comments (doc comments). It is mainly targeted at Lua and documenting Lua APIs, but it can also parse C with according doc comments for documenting Lua modules implemented in C.";}
+	};
+
+	dependencies {
+        // This node defines any outside items which may be needed to consume this package.
+        packages : {
+            // This is a list of other NuGet packages required to use this package.
+            // Each item follows the format "<pkg_name>/<version>"
+            lua/"[5.1, 5.4)",
+            penlight/"[0.8, 1)"
+        };
+    };
+
+	files {
+		// declare a lua collection
+		lua : {
+			// copies the whole folder tree.
+			#add-all-files : Items.ldoc_Files;
+			// set the destination in the package itself. 
+			#destination : ${build_root}\ldoc;
+		};
+		lua_root : {
+			// copies the whole folder tree.
+			#add-all-files : Items.ldoc_Root_Files;
+			// set the destination in the package itself. 
+			#destination : ${build_root};
+		};
+		docs : {
+			#destination = ${d_docs}\ldoc;
+			doc\**\*;
+		};
+
+		lua : {".\ldoc\**\*"};
+		lua_root : {".\ldoc.lua", ".\ldoc.bat"};
+    };
+	targets {
+		AfterBuild {
+			.Copy {
+				SourceFiles = "@(ldoc_Root_Files)";
+				DestinationFolder = "$(TargetDir)";
+				SkipUnchangedFiles = true;
+				UseHardlinksIfPossible = true;
+			};
+		};
+		AfterBuild {
+			.Copy {
+				SourceFiles = "@(ldoc_Files)";
+				DestinationFiles = "@(ldoc_Files->'%(TargetDir)ldoc\%(RecursiveDir)%(Filename)%(Extension)')";
+				SkipUnchangedFiles = true;
+			};
+
+		};
+	}
+}
