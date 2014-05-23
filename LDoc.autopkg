@@ -2,7 +2,7 @@ nuget {
 	nuspec {
 		id = ldoc;
 		title: LDoc;
-		version: 1.4.2.14;
+		version: 1.4.2.15;
 		authors: {coapp, Steve Donovan};
 		owners: {Steve Donovan};
 		licenseUrl: "http://opensource.org/licenses/MIT";
