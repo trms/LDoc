@@ -109,6 +109,7 @@ function KindMap:add (item,items,description)
    local group = item[self.fieldname] -- which wd be item's type or section
    local kname = self.klass.types_by_tag[group] -- the kind name
    if not self[kname] then
+    -- print(kname,group,self.fieldname)
       self[kname] = M.type_iterator (items,self.fieldname,group)
       self.klass.descriptions[kname] = description
    end
@@ -199,6 +200,27 @@ end
 
 function M.strip (s)
    return s:gsub('^%s+',''):gsub('%s+$','')
+end
+
+-- Joins strings using a separator.
+--
+-- Empty strings and nil arguments are ignored:
+--
+--    assert(join('+', 'one', '', 'two', nil, 'three') == 'one+two+three')
+--    assert(join(' ', '', '') == '')
+--
+-- This is especially useful for the last case demonstrated above,
+-- where "conventional" solutions (".." or table.concat) would result
+-- in a spurious space.
+function M.join(sep, ...)
+  local contents = {}
+  for i = 1, select('#', ...) do
+    local value = select(i, ...)
+    if value and value ~= "" then
+      contents[#contents + 1] = value
+    end
+  end
+  return table.concat(contents, sep)
 end
 
 function M.check_directory(d)
